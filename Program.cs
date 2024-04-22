@@ -33,7 +33,6 @@ static class GameController
         switch (gameMode)
         {
             case 1:
-                Console.WriteLine("fucker");
                 _p1 = new Human($"{names[0]}");
                 _p2 = new Robot();
                 break;
@@ -197,12 +196,26 @@ class Human : IPlayer
     public string Name { get; set; }
     public char Token { get; set; }
     public int Score { get; set; }
+
+    private static bool _existing = false;
     
     public Human(string name)
     {
-        Name = name;
-        Token = 'X';
-        Score = 0;
+        if (_existing)
+        {
+            Name = name;
+            Token = 'O';
+            Score = 0;
+        }
+        else
+        {
+            Name = name;
+            Token = 'X';
+            Score = 0;
+            _existing = true;
+        }
+
+
     }
     //Make Move
     public void MakeMove(char[,] board)
