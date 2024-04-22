@@ -1,0 +1,14 @@
+C:\Users\LENOVO\Documents\Canada\Calgary\BVC\courses\Winter2024\SODV1202\connectFour\bin\Debug\net7.0\connectFour.exe
+C:\Users\LENOVO\Documents\Canada\Calgary\BVC\courses\Winter2024\SODV1202\connectFour\bin\Debug\net7.0\connectFour.deps.json
+C:\Users\LENOVO\Documents\Canada\Calgary\BVC\courses\Winter2024\SODV1202\connectFour\bin\Debug\net7.0\connectFour.runtimeconfig.json
+C:\Users\LENOVO\Documents\Canada\Calgary\BVC\courses\Winter2024\SODV1202\connectFour\bin\Debug\net7.0\connectFour.dll
+C:\Users\LENOVO\Documents\Canada\Calgary\BVC\courses\Winter2024\SODV1202\connectFour\bin\Debug\net7.0\connectFour.pdb
+C:\Users\LENOVO\Documents\Canada\Calgary\BVC\courses\Winter2024\SODV1202\connectFour\obj\Debug\net7.0\connectFour.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\LENOVO\Documents\Canada\Calgary\BVC\courses\Winter2024\SODV1202\connectFour\obj\Debug\net7.0\connectFour.AssemblyInfoInputs.cache
+C:\Users\LENOVO\Documents\Canada\Calgary\BVC\courses\Winter2024\SODV1202\connectFour\obj\Debug\net7.0\connectFour.AssemblyInfo.cs
+C:\Users\LENOVO\Documents\Canada\Calgary\BVC\courses\Winter2024\SODV1202\connectFour\obj\Debug\net7.0\connectFour.csproj.CoreCompileInputs.cache
+C:\Users\LENOVO\Documents\Canada\Calgary\BVC\courses\Winter2024\SODV1202\connectFour\obj\Debug\net7.0\connectFour.dll
+C:\Users\LENOVO\Documents\Canada\Calgary\BVC\courses\Winter2024\SODV1202\connectFour\obj\Debug\net7.0\refint\connectFour.dll
+C:\Users\LENOVO\Documents\Canada\Calgary\BVC\courses\Winter2024\SODV1202\connectFour\obj\Debug\net7.0\connectFour.pdb
+C:\Users\LENOVO\Documents\Canada\Calgary\BVC\courses\Winter2024\SODV1202\connectFour\obj\Debug\net7.0\connectFour.genruntimeconfig.cache
+C:\Users\LENOVO\Documents\Canada\Calgary\BVC\courses\Winter2024\SODV1202\connectFour\obj\Debug\net7.0\ref\connectFour.dll
