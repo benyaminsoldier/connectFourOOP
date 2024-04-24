@@ -20,64 +20,64 @@ static class GameController
 
     
 
-    private static bool CheckDiagonalStrike(in char[,] board)
+    private static bool CheckDiagonalStrike(GameBoard game)
     {
-        for(int i=0; i<board.GetLength(0)-3; i++)
+        for(int i=0; i< game.Board.GetLength(0)-3; i++)
         {
-            for (int j = 0; j < board.GetLength(1) - 3; j++)
+            for (int j = 0; j < game.Board.GetLength(1) - 3; j++)
             {
-                if (board[i, j] == 'X' && board[i + 1, j + 1] == 'X' && board[i + 2, j + 2] == 'X' && board[i + 3, j + 3] == 'X')
+                if (game.Board[i, j] == 'X' && game.Board[i + 1, j + 1] == 'X' && game.Board[i + 2, j + 2] == 'X' && game.Board[i + 3, j + 3] == 'X')
                     return true;
 
-                else if (board[i, j] == 'O' && board[i + 1, j + 1] == 'O' && board[i + 2, j + 2] == 'O' && board[i + 3, j + 3] == 'O')
+                else if (game.Board[i, j] == 'O' && game.Board[i + 1, j + 1] == 'O' && game.Board[i + 2, j + 2] == 'O' && game.Board[i + 3, j + 3] == 'O')
                     return true;
             }
         }
-        for (int i = 0; i < board.GetLength(0) - 3; i++)
+        for (int i = 0; i < game.Board.GetLength(0) - 3; i++)
         {
-            for (int j = board.GetLength(1)-1; j > board.GetLength(1) - 4; j--)
+            for (int j = game.Board.GetLength(1)-1; j > game.Board.GetLength(1) - 4; j--)
             {
-                if (board[i, j] == 'X' && board[i + 1, j - 1] == 'X' && board[i + 2, j - 2] == 'X' && board[i + 3, j - 3] == 'X')
+                if (game.Board[i, j] == 'X' && game.Board[i + 1, j - 1] == 'X' && game.Board[i + 2, j - 2] == 'X' && game.Board[i + 3, j - 3] == 'X')
                     return true;
 
-                else if (board[i, j] == 'O' && board[i + 1, j - 1] == 'O' && board[i + 2, j - 2] == 'O' && board[i + 3, j - 3] == 'O')
+                else if (game.Board[i, j] == 'O' && game.Board[i + 1, j - 1] == 'O' && game.Board[i + 2, j - 2] == 'O' && game.Board[i + 3, j - 3] == 'O')
                     return true;
             }
         }
         return false;
     }
-    private static bool CheckVerticalStrike(in char[,] board)
+    private static bool CheckVerticalStrike(GameBoard game)
     {
-        for (int i = 0; i < board.GetLength(1); i++)
+        for (int i = 0; i < game.Board.GetLength(1); i++)
         {
-            for (int j = 0; j < board.GetLength(0)-3; j++)
+            for (int j = 0; j < game.Board.GetLength(0)-3; j++)
             {
-                if (board[j, i] == 'X' && board[j+1, i] == 'X' && board[j+2, i] == 'X' && board[j+3, i] == 'X')
+                if (game.Board[j, i] == 'X' && game.Board[j+1, i] == 'X' && game.Board[j+2, i] == 'X' && game.Board[j+3, i] == 'X')
                     return true;
 
-                else if (board[j, i] == 'O' && board[j + 1, i] == 'O' && board[j + 2, i] == 'O' && board[j + 3, i] == 'O')
+                else if (game.Board[j, i] == 'O' && game.Board[j + 1, i] == 'O' && game.Board[j + 2, i] == 'O' && game.Board[j + 3, i] == 'O')
                     return true;
             }
         }
         return false;
     }
-    private static bool CheckHorizontalStrike(in char[,] board)
+    private static bool CheckHorizontalStrike(GameBoard game)
     {
-        for(int i=0; i < board.GetLength(0); i++)
+        for(int i=0; i < game.Board.GetLength(0); i++)
         {
-            for(int j=0; j < board.GetLength(1)-3; j++)
+            for(int j=0; j < game.Board.GetLength(1)-3; j++)
             {
-                if (board[i,j] == 'X' && board[i, j+1] == 'X' && board[i, j + 2] == 'X' && board[i, j + 3] == 'X')
+                if (game.Board[i,j] == 'X' && game.Board[i, j+1] == 'X' && game.Board[i, j + 2] == 'X' && game.Board[i, j + 3] == 'X')
                     return true;
 
-                else if (board[i, j] == 'O' && board[i, j + 1] == 'O' && board[i, j + 2] == 'O' && board[i, j + 3] == 'O')
+                else if (game.Board[i, j] == 'O' && game.Board[i, j + 1] == 'O' && game.Board[i, j + 2] == 'O' && game.Board[i, j + 3] == 'O')
                     return true;
             }
         }
         return false;
     }
 
-    private static bool CheckWinner(in char[,] board)
+    private static bool CheckWinner(GameBoard board)
     {
         if (CheckHorizontalStrike(board))
             return true;
@@ -91,7 +91,7 @@ static class GameController
 
     public static void Play()
     {
-
+        //Score, restart and exit commands pending...
         int gameMode = _userInterface.Intro();
         string[] names = _userInterface.GetPlayersName(gameMode);
         switch (gameMode)
@@ -120,7 +120,7 @@ static class GameController
             _userInterface.DisplayTurn(_p2);
             _p2.MakeMove(_board.Board);
 
-        } while (!CheckWinner(_board.Board));
+        } while (!CheckWinner(_board));
 
         _userInterface.ResetUI();
         _board.DrawBoard();
@@ -132,6 +132,8 @@ static class GameController
     
 
 }
+
+
 class UI
 {
     //Gives sense to the game:
