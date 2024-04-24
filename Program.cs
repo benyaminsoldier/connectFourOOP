@@ -18,9 +18,73 @@ static class GameController
     private static IPlayer _p1;
     private static IPlayer _p2;
 
+    
 
-    private static bool checkConditions()
+    private static bool CheckDiagonalStrike(in char[,] board)
     {
+        for(int i=0; i<board.GetLength(0)-3; i++)
+        {
+            for (int j = 0; j < board.GetLength(1) - 3; j++)
+            {
+                if (board[i, j] == 'X' && board[i + 1, j + 1] == 'X' && board[i + 2, j + 2] == 'X' && board[i + 3, j + 3] == 'X')
+                    return true;
+
+                else if (board[i, j] == 'O' && board[i + 1, j + 1] == 'O' && board[i + 2, j + 2] == 'O' && board[i + 3, j + 3] == 'O')
+                    return true;
+            }
+        }
+        for (int i = 0; i < board.GetLength(0) - 3; i++)
+        {
+            for (int j = board.GetLength(1)-1; j > board.GetLength(1) - 4; j--)
+            {
+                if (board[i, j] == 'X' && board[i + 1, j - 1] == 'X' && board[i + 2, j - 2] == 'X' && board[i + 3, j - 3] == 'X')
+                    return true;
+
+                else if (board[i, j] == 'O' && board[i + 1, j - 1] == 'O' && board[i + 2, j - 2] == 'O' && board[i + 3, j - 3] == 'O')
+                    return true;
+            }
+        }
+        return false;
+    }
+    private static bool CheckVerticalStrike(in char[,] board)
+    {
+        for (int i = 0; i < board.GetLength(1); i++)
+        {
+            for (int j = 0; j < board.GetLength(0)-3; j++)
+            {
+                if (board[j, i] == 'X' && board[j+1, i] == 'X' && board[j+2, i] == 'X' && board[j+3, i] == 'X')
+                    return true;
+
+                else if (board[j, i] == 'O' && board[j + 1, i] == 'O' && board[j + 2, i] == 'O' && board[j + 3, i] == 'O')
+                    return true;
+            }
+        }
+        return false;
+    }
+    private static bool CheckHorizontalStrike(in char[,] board)
+    {
+        for(int i=0; i < board.GetLength(0); i++)
+        {
+            for(int j=0; j < board.GetLength(1)-3; j++)
+            {
+                if (board[i,j] == 'X' && board[i, j+1] == 'X' && board[i, j + 2] == 'X' && board[i, j + 3] == 'X')
+                    return true;
+
+                else if (board[i, j] == 'O' && board[i, j + 1] == 'O' && board[i, j + 2] == 'O' && board[i, j + 3] == 'O')
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    private static bool CheckWinner(in char[,] board)
+    {
+        if (CheckHorizontalStrike(board))
+            return true;
+        else if (CheckVerticalStrike(board))
+            return true;
+        else if (CheckDiagonalStrike(board))
+            return true;
         return false;
     }
 
@@ -56,12 +120,14 @@ static class GameController
             _userInterface.DisplayTurn(_p2);
             _p2.MakeMove(_board.Board);
 
-        } while (true);
+        } while (!CheckWinner(_board.Board));
 
-
-        //_board.Draw();
-
-
+        _userInterface.ResetUI();
+        _board.DrawBoard();
+        //Score pending...
+        //Winner info pending...
+        Console.WriteLine("     Chicken Winner!");
+    
     }
     
 
@@ -92,10 +158,7 @@ class UI
             return false;
         return true;
     }
-    private bool ValidatePlayerName()
-    {
-        return true;
-    }
+
     public void ResetUI()
     {
         Console.Clear();
@@ -135,9 +198,10 @@ class UI
             eObj = null;
             ResetUI();
             Console.WriteLine("Select Game Mode: Single Player (1)  -OR- MultiPlayer (2)");
-            GameMode = int.Parse(Console.ReadLine());
+
             try
             {
+                GameMode = int.Parse(Console.ReadLine());
                 if (!ValidateGameMode()) throw (new Exception("Invalid Game Mode."));
             }
             catch (Exception e)
@@ -160,16 +224,32 @@ class UI
         
     }
     
-    public string[] GetPlayersName(int gameMode)
+    public string[] GetPlayersName(int gameMode) 
     {
-        string [] names = new string [gameMode];
-        for(int i=1; i <= gameMode; i++)
+        Exception eObj;
+        string[] names = new string[gameMode];
+        do
         {
-            Console.WriteLine($"Please Enter Player {i} Name:");
-            names[i-1] = Console.ReadLine();
+            eObj = null;
+            try
+            {             
+                for (int i = 1; i <= gameMode; i++)
+                {
+                    Console.WriteLine($"Please Enter Player {i} Name:");
+                    names[i - 1] = Console.ReadLine();
+                    if (names[i - 1] == "") 
+                        throw (new Exception("Invalid Name"));                   
+                }               
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                eObj = e;
+            }
+        } while (eObj != null);
 
-        }
         return names;
+
     }
     public void DisplayTurn(IPlayer player)
     {
@@ -217,27 +297,51 @@ class Human : IPlayer
 
 
     }
+    private static bool ValidateMove(int move)
+    {
+        if (move < 1 || move > 7) 
+            return true;
+        return false;
+
+    }
     //Make Move
     public void MakeMove(char[,] board)
     {
-        //Validation pending....
-        Console.Write("Make a move: ");
-        int move = int.Parse(Console.ReadLine())-1;
-        for(int i=0; i<board.GetLength(0); i++) //height
+        Exception eObj;
+        do
         {
-            if(i == board.GetLength(0) - 1 && board[i, move] == '#')
+
+            //Validation pending....
+            eObj = null;
+            Console.Write("Make a move: ");
+            try
             {
-                board[i, move] = this.Token;
-                break;
+                int move = int.Parse(Console.ReadLine()) - 1;
+                if (ValidateMove(move+1)) throw (new Exception("Invalid Input"));
+                for (int i = 0; i < board.GetLength(0); i++) //height
+                {
+                    if (i == board.GetLength(0) - 1 && board[i, move] == '#')
+                    {
+                        board[i, move] = this.Token;
+                        break;
+                    }
+                    else if (board[i, move] == 'X' || board[i, move] == 'O')
+                    {
+                        board[i - 1, move] = this.Token;
+                        break;
+                    }
+                    else if (board[i, move] == '#')
+                        continue;
+                }
             }
-            else if (board[i, move] == 'X' || board[i, move] == 'O')
+            catch (Exception e)
             {
-                board[i-1, move] = this.Token;
-                break;
+                Console.WriteLine(e.Message);
+                eObj = e;
             }
-            else if (board[i, move] == '#')
-                continue;
-        }
+        } while (eObj != null);
+
+
 
     }
 
