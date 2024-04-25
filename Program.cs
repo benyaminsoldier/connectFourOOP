@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading;
 using System.Runtime.InteropServices;
+using System.Numerics;
 
 static class GameController
 {
-    //
     //Applies Game Mode
     //Manage the players, Board, and UI Classes
     //This Module Contains the game logic
@@ -18,19 +18,17 @@ static class GameController
     private static IPlayer _p1;
     private static IPlayer _p2;
 
-    
-
-    private static bool CheckDiagonalStrike(GameBoard game)
+    private static char CheckDiagonalStrike(GameBoard game)
     {
         for(int i=0; i< game.Board.GetLength(0)-3; i++)
         {
             for (int j = 0; j < game.Board.GetLength(1) - 3; j++)
             {
                 if (game.Board[i, j] == 'X' && game.Board[i + 1, j + 1] == 'X' && game.Board[i + 2, j + 2] == 'X' && game.Board[i + 3, j + 3] == 'X')
-                    return true;
+                    return 'X';
 
                 else if (game.Board[i, j] == 'O' && game.Board[i + 1, j + 1] == 'O' && game.Board[i + 2, j + 2] == 'O' && game.Board[i + 3, j + 3] == 'O')
-                    return true;
+                    return 'O';
             }
         }
         for (int i = 0; i < game.Board.GetLength(0) - 3; i++)
@@ -38,101 +36,188 @@ static class GameController
             for (int j = game.Board.GetLength(1)-1; j > game.Board.GetLength(1) - 4; j--)
             {
                 if (game.Board[i, j] == 'X' && game.Board[i + 1, j - 1] == 'X' && game.Board[i + 2, j - 2] == 'X' && game.Board[i + 3, j - 3] == 'X')
-                    return true;
+                    return 'X';
 
                 else if (game.Board[i, j] == 'O' && game.Board[i + 1, j - 1] == 'O' && game.Board[i + 2, j - 2] == 'O' && game.Board[i + 3, j - 3] == 'O')
-                    return true;
+                    return 'O';
             }
         }
-        return false;
+        return '#';
     }
-    private static bool CheckVerticalStrike(GameBoard game)
+    private static char CheckVerticalStrike(GameBoard game)
     {
         for (int i = 0; i < game.Board.GetLength(1); i++)
         {
             for (int j = 0; j < game.Board.GetLength(0)-3; j++)
             {
                 if (game.Board[j, i] == 'X' && game.Board[j+1, i] == 'X' && game.Board[j+2, i] == 'X' && game.Board[j+3, i] == 'X')
-                    return true;
+                    return 'X';
 
                 else if (game.Board[j, i] == 'O' && game.Board[j + 1, i] == 'O' && game.Board[j + 2, i] == 'O' && game.Board[j + 3, i] == 'O')
-                    return true;
+                    return 'O';
             }
         }
-        return false;
+        return '#';
     }
-    private static bool CheckHorizontalStrike(GameBoard game)
+    private static char CheckHorizontalStrike(GameBoard game)
     {
         for(int i=0; i < game.Board.GetLength(0); i++)
         {
             for(int j=0; j < game.Board.GetLength(1)-3; j++)
             {
                 if (game.Board[i,j] == 'X' && game.Board[i, j+1] == 'X' && game.Board[i, j + 2] == 'X' && game.Board[i, j + 3] == 'X')
-                    return true;
+                    return 'X';
+               
 
                 else if (game.Board[i, j] == 'O' && game.Board[i, j + 1] == 'O' && game.Board[i, j + 2] == 'O' && game.Board[i, j + 3] == 'O')
-                    return true;
+                    return 'O';
             }
+        }
+        return '#';
+    }
+    private static bool CheckTie(GameBoard game)
+    {
+        for (int i = 0; i < game.Board.GetLength(0); i++)
+        {
+            for (int j = 0; j < game.Board.GetLength(1); j++)
+            {
+                if (game.Board[i, j] == '#') return false;
+            }
+        }
+        return true;
+    }
+
+    private static bool CheckWinner(GameBoard board, IPlayer player1, IPlayer player2)
+    {
+        _userInterface.ResetUI();
+        _board.DrawBoard();
+        if (CheckHorizontalStrike(board) == 'X')
+        {
+            Console.WriteLine($"Thw winner is: {player1.Name}");
+            return true;
+        }
+        else if (CheckHorizontalStrike(board) == 'O')
+        {
+            Console.WriteLine($"Thw winner is: {player2.Name}");
+            return true;
+        }
+        else if (CheckVerticalStrike(board) == 'X')
+        {
+            Console.WriteLine($"Thw winner is: {player1.Name}");
+            return true;
+        }
+        else if (CheckVerticalStrike(board) == 'O')
+        {
+            Console.WriteLine($"Thw winner is: {player2.Name}");
+            return true;
+        }
+
+        else if (CheckDiagonalStrike(board) == 'X')
+        {
+            Console.WriteLine($"Thw winner is: {player1.Name}");
+            return true;
+        }
+        else if (CheckDiagonalStrike(board) == 'O')
+        {
+            Console.WriteLine($"Thw winner is: {player2.Name}");
+            return true;
+        }
+
+        else if (CheckTie(board))
+        {
+            Console.WriteLine("It is a tie...");
+            return true;
+        }
+            
+        return false;
+    }
+    private static bool ValidateNewGame(string input)
+    {
+        if(input != "Y" && input != "N")
+        {
+            return true;
         }
         return false;
     }
-
-    private static bool CheckWinner(GameBoard board)
+    private static bool ResetGame(ref string reset)
     {
-        if (CheckHorizontalStrike(board))
+        Exception eObj;
+        do
+        {
+            eObj = null;
+
+            try
+            {
+                Console.WriteLine("New Game? YES (Y) -OR- NO (N)");
+                reset = Console.ReadLine();
+                if (ValidateNewGame(reset))
+                    throw (new Exception("Invalid Command"));
+
+            }
+            catch (Exception e)
+            {
+                eObj = e;
+            }
+        } while (eObj != null);
+
+        if (reset == "Y")
+        {
+            Human.Existing = false;
             return true;
-        else if (CheckVerticalStrike(board))
-            return true;
-        else if (CheckDiagonalStrike(board))
-            return true;
+        }
+           
         return false;
+
     }
 
 
     public static void Play()
     {
         //Score, restart and exit commands pending...
-        int gameMode = _userInterface.Intro();
-        string[] names = _userInterface.GetPlayersName(gameMode);
-        switch (gameMode)
-        {
-            case 1:
-                _p1 = new Human($"{names[0]}");
-                _p2 = new Robot();
-                break;
-            case 2:
-                _p1 = new Human($"{names[0]}");
-                _p2 = new Human($"{names[1]}");
-                break;
-        }
-        Console.WriteLine("Press any key to continue...");
-        Console.ReadLine();
-        _board.StartBoard();
-
+        string reset = "Y";
         do
         {
+             
+            int gameMode = _userInterface.Intro();
+            string[] names = _userInterface.GetPlayersName(gameMode);
+            switch (gameMode)
+            {
+                case 1:
+                    _p1 = new Human($"{names[0]}");
+                    _p2 = new Robot();
+                    break;
+                case 2:
+                    _p1 = new Human($"{names[0]}");
+                    _p2 = new Human($"{names[1]}");
+                    break;
+            }
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadLine();
+            _board.StartBoard();
             _userInterface.ResetUI();
             _board.DrawBoard();
-            _userInterface.DisplayTurn(_p1);
-            _p1.MakeMove(_board.Board);
-            _userInterface.ResetUI();
-            _board.DrawBoard();
-            _userInterface.DisplayTurn(_p2);
-            _p2.MakeMove(_board.Board);
 
-        } while (!CheckWinner(_board));
+            do
+            {
+                _userInterface.DisplayTurn(_p1);
+                _p1.MakeMove(_board.Board);
+                _userInterface.ResetUI();
+                _board.DrawBoard();
+                if (CheckWinner(_board, _p1, _p2))
+                    break;
+                _userInterface.DisplayTurn(_p2);
+                _p2.MakeMove(_board.Board);
 
-        _userInterface.ResetUI();
-        _board.DrawBoard();
-        //Score pending...
-        //Winner info pending...
-        Console.WriteLine("     Chicken Winner!");
+            } while (!CheckWinner(_board, _p1, _p2));
+                
+
+        } while (ResetGame(ref reset));
+
+        Console.WriteLine("Thank you for playing, press any key to exit...");
+
     
     }
-    
-
 }
-
 
 class UI
 {
@@ -193,8 +278,7 @@ class UI
     }
 
     public int CheckGameMode(out Exception eObj)
-    {
-        
+    {      
         do
         {
             eObj = null;
@@ -215,15 +299,13 @@ class UI
         } while (eObj != null);
 
         return GameMode;
-
     }
 
     public int Intro() //Intro gets the game mode and pass it to the controller
     {
         Exception eObj;
         CheckStart(out eObj);
-        return CheckGameMode(out eObj);
-        
+        return CheckGameMode(out eObj);       
     }
     
     public string[] GetPlayersName(int gameMode) 
@@ -257,8 +339,6 @@ class UI
     {
         Console.WriteLine($"   It is {player.Name}'s turn"); 
     }
-   
-
 
 }
 public interface IPlayer 
@@ -266,7 +346,9 @@ public interface IPlayer
     public string Name { get; set; }
     public char Token { get; set; }
     public int Score { get; set; }
-    
+
+    public static bool Existing = false;
+
     //We still do not know if the game is gonna be played: Human vs Human || Human vs Robot
     public void MakeMove(char[,] board);
 
@@ -279,11 +361,11 @@ class Human : IPlayer
     public char Token { get; set; }
     public int Score { get; set; }
 
-    private static bool _existing = false;
+    public static bool Existing = false;
     
     public Human(string name)
     {
-        if (_existing)
+        if (Existing)
         {
             Name = name;
             Token = 'O';
@@ -294,10 +376,8 @@ class Human : IPlayer
             Name = name;
             Token = 'X';
             Score = 0;
-            _existing = true;
+            Existing = true;
         }
-
-
     }
     private static bool ValidateMove(int move)
     {
@@ -312,8 +392,6 @@ class Human : IPlayer
         Exception eObj;
         do
         {
-
-            //Validation pending....
             eObj = null;
             Console.Write("Make a move: ");
             try
@@ -322,6 +400,8 @@ class Human : IPlayer
                 if (ValidateMove(move+1)) throw (new Exception("Invalid Input"));
                 for (int i = 0; i < board.GetLength(0); i++) //height
                 {
+                    if (board[0,move] != '#')
+                        throw (new Exception("Invalid Input"));
                     if (i == board.GetLength(0) - 1 && board[i, move] == '#')
                     {
                         board[i, move] = this.Token;
@@ -342,12 +422,7 @@ class Human : IPlayer
                 eObj = e;
             }
         } while (eObj != null);
-
-
-
     }
-
- 
 }
 class Robot : IPlayer
 {
@@ -384,10 +459,7 @@ class Robot : IPlayer
             else if (board[i, move] == '#')
                 continue;
         }
-
     }
-
-
 }
 
 
@@ -440,10 +512,7 @@ class GameBoard
             Console.Write($" {i} ");
         }
         Console.WriteLine("\n");
-    }
-
-
-    
+    }   
 }
 
 class Program
